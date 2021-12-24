@@ -24,7 +24,6 @@ passport.use(new LocalStrategy(
     passwordField: 'password',
   },
   (email, password, done) => {
-  console.log(email);
   User.findOne({email}, (err, user) => {
     if (err)
       return done(err);
@@ -44,11 +43,17 @@ passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: 'secret_key',
   },
-  function(jwtPayload, cb) {
-    return User.findById(jwtPayload.id).exec((err, theUser) => {
+  (jwtPayload, cb) => {
+    User.findById(jwtPayload.theUser._id, (err, user) => {
       if (err)
         return cb(err);
-      return cb(null, theUser);
+      if (user === null) {
+        const err = new Error("no such user");
+        err.status = 404;
+        return cb(err);
+      } else {
+        return cb(null, user);
+      }
     });
   }
 ));

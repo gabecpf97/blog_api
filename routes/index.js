@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const userController = require('../controllers/userController');
 const postController = require('../controllers/postController');
+const auth = passport.authenticate('jwt', {session: false});
 
 /* GET home page. */
 router.get('/', postController.index);
@@ -10,9 +11,10 @@ router.get('/', postController.index);
 // routes for user
 router.post('/sign_up', userController.user_create);
 router.post('/log_in', userController.user_log_in_post);
-// router.get('/user/:id', userController.user_detail);
-// router.put('/user/:id', userController.user_put);
-// router.delete('/user/:id', userController_delete);
+router.get('/user/:id', auth, userController.user_detail);
+router.post('/user/:id/info', auth, userController.user_info_post);
+router.post('/user/:id/password', auth, userController.user_password_post);
+router.post('/user/:id/delete', userController.user_delete);
 
 // routes for post
 // router.post('/post/create', postController.post_create_post);
