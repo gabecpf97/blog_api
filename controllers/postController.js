@@ -50,3 +50,30 @@ exports.post_create = [
         }
     }
 ]
+
+exports.post_update = [
+    body('title', "Title must not be empty").trim().isLength({min: 1}).escape(),
+    body('message', "Message must not be empty").trim().isLength({min: 1}).escape(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        const post = new Post({
+            title: req.body.title,
+            message: req.body.message,
+            user: req.user,
+            _id: req.params.id,
+        });
+        if (!errors.isEmpty()) {
+            res.send({errors: errors.array()});
+        } else {
+            Post.findById(req.params.id).exec((err, thePost) => {
+                post.comment_cnt = thePost.comment_cnt;
+                post.date = thePost.date;
+                Post.findByIdAndUpdate(req.params.id, post, {}, (err, newPost) => {
+                    if (err)
+                        return next(err);
+                    res.send({post});
+                });
+            });
+        }
+    }
+]
