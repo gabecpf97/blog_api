@@ -1,11 +1,8 @@
-const async = require('async');
 const bcrypt = require('bcrypt');
 const { body, check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const Post = require('../models/post');
 const User = require('../models/user');
-const Comment = require('../models/comment');
 
 exports.user_create = [
     body('username', 'Username have to be longer than 4 letter')
