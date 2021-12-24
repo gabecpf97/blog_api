@@ -5,13 +5,53 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const passportJwt = require('passport-jwt');
+const JWTStrategy = passportJwt.Strategy;
+const ExtractJWT = passportJwt.ExtractJwt;
 const compression = require('compression');
 const helmet = require('helmet');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const User = require('./models/user');
 const indexRouter = require('./routes/index');
+
+// passport setup
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'email',
+    passwordField: 'password',
+  },
+  (email, password, done) => {
+  console.log(email);
+  User.findOne({email}, (err, user) => {
+    if (err)
+      return done(err);
+    if (!user)
+      return done(null, false, {message: 'Email not found'});
+    bcrypt.compare(password, user.password, (err, res) => {
+      if (err)
+        return next(err);
+      if (!res)
+        return done(null, false, {message: 'Password incorrect'});
+      return done(null, user, 'Loged in');
+    });
+  });
+}));
+
+passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: 'secret_key',
+  },
+  function(jwtPayload, cb) {
+    return User.findById(jwtPayload.id).exec((err, theUser) => {
+      if (err)
+        return cb(err);
+      return cb(null, theUser);
+    });
+  }
+));
 
 const app = express();
 
@@ -26,6 +66,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(passport.initialize());
 app.use(compression());
 app.use(helmet());
 app.use(logger('dev'));
