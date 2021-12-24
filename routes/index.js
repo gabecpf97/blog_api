@@ -20,8 +20,9 @@ router.post('/user/:id/delete', userController.user_delete);
 router.post('/post/create', auth, postController.post_create);
 router.get('/post/:id', postController.post_detail);
 router.post('/post/:id/update', auth, postController.post_update);
-// router.post('/post/:id', postController.post_delete);
-// router.post('/post/:id/comment', postController.post_comment_post);
-// router.post('/post/:id/comment', postController.post_comment_update);
+router.post('/post/:id/delete', auth, postController.post_delete);
+router.post('/post/:id/comment/create', auth, postController.post_comment_post);
+router.post('/post/:id/comment/:c_id/update', auth, postController.post_comment_update);
+router.post('/post/:id/comment/:c_id/delete', auth, postController.post_comment_delete);
 
 module.exports = router;
