@@ -60,7 +60,7 @@ exports.user_create = [
 exports.user_log_in_post = async (req, res, next) => {
     passport.authenticate('local', {session: false}, (err, theUser, info) => {
         if (err || !theUser) {
-            return res.status(404).json({
+            return res.json({
                 message: info.message
             });
         }
@@ -68,7 +68,7 @@ exports.user_log_in_post = async (req, res, next) => {
             if (err)
                 res.send(err);
             const token = jwt.sign({theUser}, 'secret_key');
-            return res.json({token});
+            return res.json(token);
         });
     })(req, res, next);
 }

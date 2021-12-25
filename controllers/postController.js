@@ -31,7 +31,6 @@ exports.post_create = [
     body('title', "Title must not be empty").trim().isLength({min: 1}).escape(),
     body('message', "Message must not be empty").trim().isLength({min: 1}).escape(),
     (req, res, next) => {
-        console.log(res);
         const errors = validationResult(req);
         const post = new Post({
             title: req.body.title,
