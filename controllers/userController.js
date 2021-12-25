@@ -17,6 +17,13 @@ exports.user_create = [
     check('email', 'Please enter an email address').custom(value => {
         return value.indexOf("@") > -1 && value.indexOf("@") < value.length;
     }),
+    check('email').custom(async (value) => {
+        return new Promise((resolve, reject) => {
+            User.findOne({email: value}).exec((err, theUser) => {
+                (theUser === null) ? resolve(true) : reject(new Error('Email already exists'));
+            });
+        });
+    }),
     body('password', 'Password have to be longer than 6 letter')
         .trim().isLength({min: 1}).escape(),
     check('confirm_password', 'Please enter the same password')
@@ -24,6 +31,7 @@ exports.user_create = [
         return value === req.body.password;
     }),
     (req, res, next) => {
+        console.log(req);
         const errors = validationResult(req);
         const user = new User({
             username: req.body.username,
@@ -41,7 +49,8 @@ exports.user_create = [
                 user.save(err => {
                     if (err)
                         return next(err);
-                    res.send({ user: user });
+                    const token = jwt.sign({user}, 'sercet_key');
+                    res.send({token});
                 }) 
             });
         }

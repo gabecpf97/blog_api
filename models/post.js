@@ -7,7 +7,6 @@ const postSchema = new Schema({
     message: {type: String, required: true},
     user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     date: {type: Date, required: true},
-    comment_cnt: {type: Number, required: true},
 });
 
 postSchema.virtual('url').get(function() {

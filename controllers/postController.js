@@ -7,10 +7,10 @@ const User = require('../models/user');
 const Comment = require('../models/comment');
 
 exports.index = (req, res, next) => {
-    Post.find({}).populate('user').exec((err, post_list) => {
+    Post.find({}).populate('user').sort({date: -1}).exec((err, post_list) => {
         if (err)
             return next(err);
-        res.send(post_list);
+        res.send({post_list});
     });
 }
 
@@ -31,6 +31,7 @@ exports.post_create = [
     body('title', "Title must not be empty").trim().isLength({min: 1}).escape(),
     body('message', "Message must not be empty").trim().isLength({min: 1}).escape(),
     (req, res, next) => {
+        console.log(res);
         const errors = validationResult(req);
         const post = new Post({
             title: req.body.title,

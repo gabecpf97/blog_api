@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportJwt = require('passport-jwt');
@@ -56,8 +57,8 @@ passport.use(new JWTStrategy({
       }
     });
   }
-));
-
+  ));
+  
 const app = express();
 
 // mongodb setup
@@ -70,7 +71,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+  
+app.use(cors());
 app.use(passport.initialize());
 app.use(compression());
 app.use(helmet());
