@@ -45,7 +45,7 @@ exports.post_create = [
             post.save(err => {
                 if (err)
                     return next(err);
-                res.send(post);
+                res.send({post});
             });
         }
     }
