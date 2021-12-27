@@ -14,8 +14,9 @@ router.post('/sign_up', userController.user_create);
 router.post('/log_in', userController.user_log_in_post);
 router.get('/user/:id', auth, userController.user_detail);
 router.post('/user/:id/info', auth, userController.user_info_post);
-router.post('/user/:id/password', auth, userController.user_password_post);
 router.post('/user/:id/delete', userController.user_delete);
+router.post('/user/:id/password', auth, userController.user_password_post);
+router.get('/user/:id/post_comment', userController.user_post_comment);
 
 // routes for post
 router.post('/post/create', auth, postController.post_create);

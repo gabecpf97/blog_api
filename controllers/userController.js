@@ -2,7 +2,10 @@ const bcrypt = require('bcrypt');
 const { body, check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const Post = require('../models/post');
 const User = require('../models/user');
+const Comment = require('../models/comment');
+const async = require('async');
 
 exports.user_create = [
     body('username', 'Username have to be longer than 4 letter')
@@ -211,3 +214,22 @@ exports.user_delete = [
         }
     }
 ]
+
+exports.user_post_comment = (req, res, next) => {
+    async.parallel({
+        post_list: (callback) => {
+            Post.find({user: req.params.id}).populate('user').exec(callback);
+        },
+        comment_list: (callback) => {
+            Comment.find({user: req.params.id}).populate('user').populate('post')
+            .exec(callback);
+        }
+    }, (err, results) => {
+        if (err)
+            return next(err);
+        res.send({
+            post_list: results.post_list,
+            comment_list: results.comment_list
+        });
+    });
+}
