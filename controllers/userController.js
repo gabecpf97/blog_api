@@ -50,7 +50,7 @@ exports.user_create = [
                     if (err)
                         return next(err);
                     const token = jwt.sign({user}, 'sercet_key');
-                    res.send({token});
+                    res.send({token, user});
                 }) 
             });
         }
@@ -68,7 +68,7 @@ exports.user_log_in_post = async (req, res, next) => {
             if (err)
                 res.send(err);
             const token = jwt.sign({theUser}, 'secret_key');
-            return res.json(token);
+            return res.json({token, user: theUser});
         });
     })(req, res, next);
 }

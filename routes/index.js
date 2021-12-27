@@ -27,5 +27,6 @@ router.post('/post/:id/comment/:c_id/update', auth, postController.post_comment_
 router.post('/post/:id/comment/:c_id/delete', auth, postController.post_comment_delete);
 
 router.get('/post_comment/:id', commentController.post_comment_get);
+router.get('/user_comment/:id', auth, commentController.user_comment_get);
 
 module.exports = router;
